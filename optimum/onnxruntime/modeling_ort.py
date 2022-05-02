@@ -62,10 +62,6 @@ ONNX_INPUTS_DOCSTRING = r"""
 """
 
 
-class DummyOnnxConfig():
-    model_type = 'onnx_model'
-
-
 @add_start_docstrings(
     """
     Base ORTModel class for implementing models using ONNX Runtime. The ORTModel implements generic methods for interacting
