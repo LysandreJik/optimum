@@ -16,6 +16,7 @@ from transformers.modeling_outputs import (
     TokenClassifierOutput,
 )
 from transformers.onnx import FeaturesManager, export
+from transformers import AutoConfig, AutoModelForQuestionAnswering
 
 import onnxruntime as ort
 from huggingface_hub import HfApi, hf_hub_download
@@ -59,6 +60,10 @@ ONNX_INPUTS_DOCSTRING = r"""
             - 0 for tokens that are **sentence B**.
             [What are token type IDs?](https://huggingface.co/docs/transformers/glossary#token-type-ids)
 """
+
+
+class DummyOnnxConfig():
+    model_type = 'onnx_model'
 
 
 @add_start_docstrings(
@@ -374,6 +379,9 @@ class ORTModelForQuestionAnswering(ORTModel):
         super().__init__(*args, **kwargs)
         # create {name:idx} dict for model outputs
         self.model_outputs = {output_key.name: idx for idx, output_key in enumerate(self.model.get_outputs())}
+
+        AutoConfig.register(self.base_model_prefix, AutoConfig)
+        AutoModelForQuestionAnswering.register(AutoConfig, ORTModelForQuestionAnswering)
 
     @add_start_docstrings_to_model_forward(
         ONNX_INPUTS_DOCSTRING.format("batch_size, sequence_length")
